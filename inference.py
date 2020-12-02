@@ -5,6 +5,7 @@ from PIL import Image
 import os
 import cv2
 from core import models
+from tqdm import tqdm
 
 PRETRAINED_WEIGHTS = "ckpt/WFLW_4HG.pth"
 GRAY_SCALE = False
@@ -34,7 +35,7 @@ else:
 
 model_ft = model_ft.to(device)
 
-for path in list_images:
+for path in tqdm(list_images):
     name = path.split("/")[-1]
     image = cv2.imread(path)
     image = cv2.resize(image, (256, 256))
@@ -45,7 +46,7 @@ for path in list_images:
     with torch.no_grad():
         outputs, _ = model_ft(image)
         pred_heatmap = outputs[-1][:, :-1, :, :][0].detach().cpu()
-        if not os.path.isdir("/mnt/vinai/match_data/train/")
+        if not os.path.isdir("/mnt/vinai/match_data/train/"):
             os.makedirs("/mnt/vinai/match_data/train/")
         np.save("/mnt/vinai/match_data/train/" + name[:-4], pred_heatmap)
 
@@ -55,7 +56,7 @@ with open("../match_data/valid_p01_s02.txt", 'r') as file:
     for line in lines:
         list_images.append(line)
 
-for path in list_images:
+for path in tqdm(list_images):
     name = path.split("/")[-1]
     image = cv2.imread(path)
     image = cv2.resize(image, (256, 256))
@@ -66,6 +67,6 @@ for path in list_images:
     with torch.no_grad():
         outputs, _ = model_ft(image)
         pred_heatmap = outputs[-1][:, :-1, :, :][0].detach().cpu()
-        if not os.path.isdir("/mnt/vinai/match_data/valid/")
+        if not os.path.isdir("/mnt/vinai/match_data/valid/"):
             os.makedirs("/mnt/vinai/match_data/valid/")
         np.save("/mnt/vinai/match_data/valid/" + name[:-4], pred_heatmap)
