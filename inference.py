@@ -37,7 +37,8 @@ model_ft = model_ft.to(device)
 
 for path in tqdm(list_images):
     name = path.split("/")[-1]
-    image = cv2.imread(path)
+    p = path.split("/")[-2]
+    image = cv2.imread("../match_data/"+p+"/"+name)
     image = cv2.resize(image, (256, 256))
     image = image.transpose((2, 0, 1))
     image = np.expand_dims(image, axis = 0)
